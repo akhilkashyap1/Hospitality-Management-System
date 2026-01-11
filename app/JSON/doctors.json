@@ -1,0 +1,29 @@
+{   
+    "status": "success",
+    "doctors_data": [
+        {
+        "id": "d001",
+        "name": "Dr. John Smith",
+        "specialization": "Cardiology",
+        "contact_number": "123-456-7890",
+        "email": "john.smith@example.com",
+        "availability": "Mon-Fri 9AM-5PM"
+        },
+        {
+        "id": "d002",
+        "name": "Dr. Emily Johnson",
+        "specialization": "Neurology",
+        "contact_number": "987-654-3210",
+        "email": "emily.johnson@example.com",
+        "availability": "Mon-Fri 9AM-5PM"
+        },
+        {
+        "id": "d003",
+        "name": "Dr. Michael Brown",
+        "specialization": "Pediatrics",
+        "contact_number": "555-123-4567",
+        "email": "michael.brown@example.com",
+        "availability": "Mon-Fri 9AM-5PM"
+        }
+    ]
+}

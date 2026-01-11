@@ -1,0 +1,8 @@
+{ "status": "success",
+  "dashboard_data":{
+   "totalPatients": 120,
+   "totalDoctors": 15,
+   "appointmentsToday": 32
+  }
+ 
+}

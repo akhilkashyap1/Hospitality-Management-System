@@ -1,0 +1,37 @@
+{
+    "status": "success",
+    "patient_data": [
+       {
+            "id": "a001",
+            "name": "John Doe",
+            "age": 45,
+            "gender": "Male",
+            "contact": "555-1234",
+            "patient_status":"treated"
+       },
+       {
+            "id": "a002",
+            "name": "Jane Smith",
+            "age": 37,
+            "gender": "Female",
+            "contact": "555-5678",
+            "patient_status": "pending"
+        },
+        {
+            "id": "a003",
+            "name": "Alice Johnson",
+            "age": 29,      
+            "gender": "Female",
+            "contact": "555-8765",
+            "patient_status": "booked"
+        },
+        {
+            "id": "a004",
+            "name": "Bob Brown",
+            "age": 53,
+            "gender": "Male",
+            "contact": "555-4321",
+            "patient_status": "booked"
+        }
+    ]
+}
