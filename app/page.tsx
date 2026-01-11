@@ -2,20 +2,19 @@
 
 import React, { useState, useEffect } from "react";
 import PageLoader from "./components/pageLoading/pages";
-import {
-  Container,
-  Typography,
-  Box,
-  CircularProgress,
-  Grid,
-  Card,
-  CardContent,
-} from "@mui/material";
+import Grid from "@mui/material/Grid";
+import Container from "@mui/material/Container";
+import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
+import CircularProgress from "@mui/material/CircularProgress";
+import Card from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
 import dashboard from "./JSON/dashboard.json";
 
 
 /* ------------------ Stat Card ------------------ */
-const StatCard = ({ title, value }) => (
+const StatCard = ({ title, value }: { title: string; value: string | number }) => (
+ 
   <Card
     sx={{
       borderRadius: 3,

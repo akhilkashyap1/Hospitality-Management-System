@@ -2,14 +2,22 @@
   "name": "hospital-management-system-fe",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://akhilkashyap1.github.io/Hospitality-Management-System/",
   "scripts": {
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "eslint"
   },
   "dependencies": {
+    "@mui/material": "^5.15.0",
+    "@mui/icons-material": "^5.15.0",
+    "@emotion/react": "^11.11.0",
+    "@emotion/styled": "^11.11.0",
     "@reduxjs/toolkit": "^2.11.2",
+    "gh-pages": "^6.3.0",
     "next": "16.1.1",
     "react": "19.2.3",
     "react-dom": "19.2.3",
