@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import {
   Container,
   Typography,
@@ -21,12 +21,20 @@ import {
 import patientData from "../JSON/patients.json";
 import { Patient } from "@/app/types/PatientDetails";
 import TableSkeleton from "../components/table/TableSkeleton";
+import { useSelector } from "react-redux";
+import { RootState } from "@/app/store";
+import { updatePatientStatus } from "../store/slices/patientsSLice";
 
 const PatientsPage: React.FC = () => {
   const router = useRouter();
+  const params = useParams();
+  const patientId = Array.isArray(params.id) ? params.id[0] : params.id;
 
   /* ---------- State ---------- */
-  const [patientsList, setPatientsList] = useState<Patient[]>([]);
+  // const [patientsList, setPatientsList] = useState<Patient[]>([]);
+  const patientsList = useSelector(
+  (state: RootState) => state.patients.patients
+);
   const [loading, setLoading] = useState(true); // table content loading
   const [loadingId, setLoadingId] = useState<string | null>(null); // button loading
 
@@ -38,7 +46,9 @@ const PatientsPage: React.FC = () => {
     setLoading(true);
     const timer = setTimeout(() => {
       if (patientData.status === "success") {
-        setPatientsList(patientData.patient_data);
+        const patient = useSelector((state: RootState) =>
+        state.patients.patients.find((p) => p.id === patientId)
+      );
       } else {
         console.error("Failed to fetch patients data");
       }
@@ -138,3 +148,7 @@ const PatientsPage: React.FC = () => {
 };
 
 export default PatientsPage;
+function dispatch(arg0: any) {
+  throw new Error("Function not implemented.");
+}
+
