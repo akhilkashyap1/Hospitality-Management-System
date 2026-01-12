@@ -19,54 +19,85 @@ import {
 } from "@mui/material";
 
 import patientData from "../JSON/patients.json";
-import { Patient } from "@/app/types/PatientDetails";
 import TableSkeleton from "../components/table/TableSkeleton";
-import { useSelector } from "react-redux";
-import { RootState } from "@/app/store";
-import { updatePatientStatus } from "../store/slices/patientsSLice";
+import { PatientDetails } from "../src/types/PatientDetails";
 
-const PatientsPage: React.FC = () => {
+const PatientsPage = () => {
   const router = useRouter();
   const params = useParams();
   const patientId = Array.isArray(params.id) ? params.id[0] : params.id;
 
-  /* ---------- State ---------- */
-  const patientsList = useSelector(
-  (state: RootState) => state.patients.patients
-);
-  const [loading, setLoading] = useState(true); // table content loading
-  const [loadingId, setLoadingId] = useState<string | null>(null); // button loading
+  const [loading, setLoading] = useState(true);
+  const [loadingId, setLoadingId] = useState<string | null>(null);
+  const [patientsList, setPatientsList] = useState<PatientDetails[]>([]);
 
-  /* ---------- Table Headers ---------- */
+  interface ProviderListResponse {
+    status: "success" | "error";
+    patient_data: PatientDetails[];
+  }
+
   const headers = ["ID", "Name", "Age", "Gender", "Contact", "Status", "Actions"];
 
-  /* ---------- Load patients ---------- */
-useEffect(() => {
-  setLoading(true);
-  const timer = setTimeout(() => {
-    if (patientData.status === "success") {
-      const patient = patientsList.find((p) => p.id === patientId);
-    } else {
-      console.error("Failed to fetch patients data");
+  /* ---------- Fetch Patients ---------- */
+  const fetchProviderData = () => {
+    try {
+      // First try localStorage
+      const storedPatients = localStorage.getItem("patients");
+      if (storedPatients) {
+        setPatientsList(JSON.parse(storedPatients));
+      } else {
+        // If localStorage empty, use JSON
+        const patientListsResponse = patientData as ProviderListResponse;
+        if (patientListsResponse.status === "success") {
+          setPatientsList([...patientListsResponse.patient_data]);
+          localStorage.setItem(
+            "patients",
+            JSON.stringify(patientListsResponse.patient_data)
+          );
+        } else {
+          setPatientsList([]);
+        }
+      }
+    } catch (error) {
+      console.error("Failed to fetch patients data:", error);
+      setPatientsList([]);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
-  }, 400);
+  };
 
-  return () => clearTimeout(timer);
-}, [patientsList, patientId]);
+  /* ---------- Update Patient Status from localStorage ---------- */
+  const updatePatientStatusFromLocalStorage = () => {
+    const storedPatients = localStorage.getItem("patients");
+    if (storedPatients) {
+      setPatientsList(JSON.parse(storedPatients));
+    }
+  };
 
-  /* ---------- Handle View Button Click ---------- */
+  /* ---------- Load Data ---------- */
+  useEffect(() => {
+    setLoading(true);
+    fetchProviderData();
+  }, []);
+
+  /* ---------- Listen for updates to localStorage ---------- */
+  useEffect(() => {
+    // updates the table if status changes in patient detail page
+    window.addEventListener("storage", updatePatientStatusFromLocalStorage);
+    return () =>
+      window.removeEventListener("storage", updatePatientStatusFromLocalStorage);
+  }, []);
+
   const handleViewClick = (id: string) => {
     setLoadingId(id);
     setTimeout(() => {
       router.push(`/patients/${id}`);
-    }, 400); 
+    }, 400);
   };
 
   return (
     <Container>
       <Card sx={{ mt: 4 }}>
-        {/* Page Title */}
         <Typography
           variant="h4"
           mt={2}
@@ -83,7 +114,6 @@ useEffect(() => {
         <CardContent>
           <TableContainer>
             <Table>
-              {/* Table Head */}
               <TableHead>
                 <TableRow>
                   {headers.map((header) => (
@@ -94,7 +124,6 @@ useEffect(() => {
                 </TableRow>
               </TableHead>
 
-              {/* Table Body */}
               <TableBody>
                 {loading ? (
                   <TableSkeleton rows={5} columns={headers.length} />
@@ -114,7 +143,7 @@ useEffect(() => {
                           variant="contained"
                           size="small"
                           onClick={() => handleViewClick(patient.id)}
-                          disabled={!!loadingId} // disable all buttons when any button is loading
+                          disabled={!!loadingId}
                           startIcon={
                             loadingId === patient.id ? (
                               <CircularProgress size={16} color="inherit" />
@@ -129,9 +158,7 @@ useEffect(() => {
                 ) : (
                   <TableRow>
                     <TableCell colSpan={headers.length} sx={{ textAlign: "center", py: 4 }}>
-                      <Typography variant="subtitle1" color="text.secondary">
-                        No patients found
-                      </Typography>
+                      No patients found
                     </TableCell>
                   </TableRow>
                 )}

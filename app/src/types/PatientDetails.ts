@@ -1,8 +1,9 @@
 
 export interface PatientDetails {
-    id: number;
+    id: string;
     name: string;
     age: number;
     gender: string;
     contact: string;
+    patient_status: string
 }

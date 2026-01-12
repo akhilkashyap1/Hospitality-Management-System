@@ -1,8 +1,7 @@
 "use client";
 
 /* ===================== Imports ===================== */
-import React, { useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import React, { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 
 import {
@@ -23,47 +22,78 @@ import {
   Divider,
 } from "@mui/material";
 
-import { RootState, AppDispatch } from "../../store";
-import { updatePatientStatus } from "../../store/slices/patientsSLice";
-import { PatientStatus } from "@/app/types/PatientDetails";
+import patientsData from "../../JSON/patients.json"; // Default JSON fallback
+
+/* ===================== Types ===================== */
+type PatientStatus = "booked" | "pending" | "treated" | "discharged";
+
+interface PatientDetails {
+  id: string;
+  name: string;
+  age: number;
+  gender: string;
+  contact: string;
+  patient_status: PatientStatus;
+}
+
+/* ===================== Helper Functions ===================== */
+const getStoredPatients = (): PatientDetails[] => {
+  // Try to read from localStorage, fallback to JSON
+  const stored = localStorage.getItem("patients");
+  return stored ? JSON.parse(stored) : (patientsData.patient_data as PatientDetails[]);
+};
+
+const savePatients = (patients: PatientDetails[]) => {
+  localStorage.setItem("patients", JSON.stringify(patients));
+};
 
 /* ===================== Component ===================== */
 const PatientPage = () => {
-  const dispatch = useDispatch<AppDispatch>();
   const { id } = useParams();
 
-  /* ---------- Redux State ---------- */
-  const patient = useSelector((state: RootState) =>
-    state.patients.patients.find((p) => p.id === id)
-  );
-
   /* ---------- Local State ---------- */
-  const [status, setStatus] = useState<PatientStatus>(
-    (patient?.patient_status as PatientStatus) ?? "booked"
-  );
+  const [patient, setPatient] = useState<PatientDetails | null>(null);
+  const [status, setStatus] = useState<PatientStatus>("booked");
   const [loading, setLoading] = useState(false);
 
   /* ---------- Snackbar State ---------- */
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
 
+  /* ---------- Load patient from localStorage ---------- */
+  useEffect(() => {
+    const patients = getStoredPatients();
+    const foundPatient = patients.find((p) => p.id === id) || null;
+    setPatient(foundPatient);
+    if (foundPatient) setStatus(foundPatient.patient_status);
+  }, [id]);
+
   /* ---------- Handlers ---------- */
-  const handlePatientsStatusChange = (event: SelectChangeEvent) => {
+  const handleStatusChange = (event: SelectChangeEvent) => {
     setStatus(event.target.value as PatientStatus);
   };
 
-  const patientDetailsSubmitHandler = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (!patient) return;
+    if (!patient || status === patient.patient_status) return;
 
     setLoading(true);
-    dispatch(updatePatientStatus({ id: patient.id, status }));
 
     setTimeout(() => {
-      setSnackbarMessage(`Patient ${patient.name} status updated to "${status}"`);
+      const updatedPatient: PatientDetails = { ...patient, patient_status: status };
+      setPatient(updatedPatient);
+
+      // Update localStorage
+      const patients = getStoredPatients();
+      const updatedPatients = patients.map((p) =>
+        p.id === updatedPatient.id ? updatedPatient : p
+      );
+      savePatients(updatedPatients);
+
+      setSnackbarMessage(`Patient "${patient.name}" status updated to "${status}"`);
       setSnackbarOpen(true);
       setLoading(false);
-    }, 1200);
+    }, 800); // Slightly faster
   };
 
   const handleSnackbarClose = () => setSnackbarOpen(false);
@@ -82,15 +112,13 @@ const PatientPage = () => {
   /* ---------- UI ---------- */
   return (
     <Container maxWidth="sm" sx={{ mt: 6 }}>
-      {/* Header */}
       <Typography variant="h4" gutterBottom align="center" sx={{ fontWeight: 600 }}>
         Patient Details
       </Typography>
 
-      {/* Card */}
       <Card elevation={4} sx={{ p: 2, borderRadius: 3 }}>
         <CardContent>
-          <Box component="form" onSubmit={patientDetailsSubmitHandler}>
+          <Box component="form" onSubmit={handleSubmit}>
             {/* Patient Info */}
             <Box mb={2}>
               <Typography variant="subtitle1" sx={{ fontWeight: 500 }}>
@@ -115,7 +143,7 @@ const PatientPage = () => {
             {/* Status Select */}
             <FormControl fullWidth disabled={loading} sx={{ mb: 3 }}>
               <InputLabel>Status</InputLabel>
-              <Select value={status} onChange={handlePatientsStatusChange}  label="Status" >
+              <Select value={status} onChange={handleStatusChange} label="Status">
                 <MenuItem value="booked">Booked</MenuItem>
                 <MenuItem value="pending">Pending</MenuItem>
                 <MenuItem value="treated">Treated</MenuItem>

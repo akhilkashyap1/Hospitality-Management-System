@@ -1,7 +1,5 @@
 "use client";
 import { ReactNode } from "react";
-import { Provider } from "react-redux";
-import { store } from "./store/index";
 import { Box } from "@mui/material";
 import Navbar from "./components/Navbar";
 
@@ -21,7 +19,6 @@ export default function RootLayout({ children }: RootLayoutProps) {
           userSelect: "none"
         }}
       >
-        <Provider store={store}>
           {/* Header / Navigation */}
           <Navbar />
 
@@ -49,7 +46,6 @@ export default function RootLayout({ children }: RootLayoutProps) {
           >
             © 2026 My Clinic
           </Box>
-        </Provider>
       </body>
     </html>
   );

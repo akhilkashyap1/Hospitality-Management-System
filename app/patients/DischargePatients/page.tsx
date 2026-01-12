@@ -1,8 +1,6 @@
 "use client";
-import React from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { dischargePatient } from "../../store/slices/patientsSLice";
-import { RootState, AppDispatch } from "../../store/index";
+
+import React, { useState, useEffect } from "react";
 import {
   Container,
   Typography,
@@ -14,22 +12,41 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Paper,
   Button,
+  Snackbar,
+  Alert,
 } from "@mui/material";
+import PatientsData from "../../JSON/patients.json";
+import { PatientDetails } from "@/app/src/types/PatientDetails";
 
-const DischargePatientsPage: React.FC = () => {
-  const dispatch = useDispatch<AppDispatch>();
-  const treatedPatients = useSelector((state: RootState) =>
-    state.patients.patients.filter((p) => p.patient_status === "treated")
-  );
+const DischargePatientsPage = () => {
+  const [treatedPatients, setTreatedPatients] = useState<PatientDetails[]>([]);
+  
+  // Snackbar state
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
 
+  useEffect(() => {
+    setTreatedPatients(PatientsData.patient_data as PatientDetails[]);
+  }, []);
+
+  /* ---------- Handle Discharge ---------- */
   const handleDischarge = (id: string) => {
-    dispatch(dischargePatient(id));
-    alert(`Patient ${id} has been discharged!`);
+    setTreatedPatients((prev) => prev.filter((patient) => patient.id !== id));
+
+    // ✅ Show notification instead of alert
+    setSnackbarMessage(`Patient ${id} has been discharged!`);
+    setSnackbarOpen(true);
   };
 
-  // Table headers
+  const fetchDischargedPatientsData = () => {
+    const patient = PatientsData.patient_data.find((p) => p.patient_status === "treated");
+  };
+
+  useEffect(() => {
+    fetchDischargedPatientsData();
+  });
+
   const headers = ["ID", "Name", "Age", "Gender", "Contact", "Actions"];
 
   return (
@@ -38,13 +55,16 @@ const DischargePatientsPage: React.FC = () => {
         <Typography variant="h4" mt={2} mb={2} px={2}>
           Discharge Patients
         </Typography>
+
         <CardContent>
           <TableContainer>
             <Table>
               <TableHead>
                 <TableRow>
                   {headers.map((header) => (
-                    <TableCell key={header}>{header}</TableCell>
+                    <TableCell key={header} sx={{ fontWeight: 600 }}>
+                      {header}
+                    </TableCell>
                   ))}
                 </TableRow>
               </TableHead>
@@ -81,6 +101,22 @@ const DischargePatientsPage: React.FC = () => {
           </TableContainer>
         </CardContent>
       </Card>
+
+      {/* ---------- Snackbar Notification ---------- */}
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={3000}
+        onClose={() => setSnackbarOpen(false)}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+      >
+        <Alert
+          onClose={() => setSnackbarOpen(false)}
+          severity="success"
+          sx={{ width: "100%" }}
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </Container>
   );
 };
