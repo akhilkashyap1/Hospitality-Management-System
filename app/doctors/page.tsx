@@ -30,10 +30,10 @@ const DoctorsPage: React.FC = () => {
   return (
     <Container>
       <Card sx={{ mt: 4 }}>
-        <Typography variant="h4" mt={2} mb={2} px={2}>
+        <Typography variant="h5" mt={2} mb={2} px={2} sx={{ fontWeight: 600 }}>
           All Doctors
         </Typography>
-        <Divider />
+        <Divider sx={{mb: "2"}} />
         <CardContent>
           <TableContainer>
             <Table>

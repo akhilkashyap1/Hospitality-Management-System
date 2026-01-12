@@ -15,6 +15,7 @@ import {
   Button,
   Snackbar,
   Alert,
+  Divider,
 } from "@mui/material";
 import PatientsData from "../../JSON/patients.json";
 import { PatientDetails } from "@/app/src/types/PatientDetails";
@@ -52,9 +53,10 @@ const DischargePatientsPage = () => {
   return (
     <Container>
       <Card sx={{ mt: 4 }}>
-        <Typography variant="h4" mt={2} mb={2} px={2}>
+        <Typography variant="h5" mt={2} mb={2} px={2} sx={{ fontWeight: 600 }}>
           Discharge Patients
         </Typography>
+        <Divider sx={{mb: "2"}} />
 
         <CardContent>
           <TableContainer>

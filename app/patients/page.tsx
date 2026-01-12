@@ -99,17 +99,16 @@ const PatientsPage = () => {
     <Container>
       <Card sx={{ mt: 4 }}>
         <Typography
-          variant="h4"
+          variant="h5"
           mt={2}
           mb={2}
           px={2}
-          textAlign="center"
           sx={{ fontWeight: 600 }}
         >
           Patient Lists
         </Typography>
 
-        <Divider />
+        <Divider sx={{mb: "2"}} />
 
         <CardContent>
           <TableContainer>
