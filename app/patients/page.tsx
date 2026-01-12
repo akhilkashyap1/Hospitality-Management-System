@@ -31,7 +31,6 @@ const PatientsPage: React.FC = () => {
   const patientId = Array.isArray(params.id) ? params.id[0] : params.id;
 
   /* ---------- State ---------- */
-  // const [patientsList, setPatientsList] = useState<Patient[]>([]);
   const patientsList = useSelector(
   (state: RootState) => state.patients.patients
 );
@@ -42,21 +41,19 @@ const PatientsPage: React.FC = () => {
   const headers = ["ID", "Name", "Age", "Gender", "Contact", "Status", "Actions"];
 
   /* ---------- Load patients ---------- */
-  useEffect(() => {
-    setLoading(true);
-    const timer = setTimeout(() => {
-      if (patientData.status === "success") {
-        const patient = useSelector((state: RootState) =>
-        state.patients.patients.find((p) => p.id === patientId)
-      );
-      } else {
-        console.error("Failed to fetch patients data");
-      }
-      setLoading(false);
-    }, 800);
+useEffect(() => {
+  setLoading(true);
+  const timer = setTimeout(() => {
+    if (patientData.status === "success") {
+      const patient = patientsList.find((p) => p.id === patientId);
+    } else {
+      console.error("Failed to fetch patients data");
+    }
+    setLoading(false);
+  }, 400);
 
-    return () => clearTimeout(timer);
-  }, []);
+  return () => clearTimeout(timer);
+}, [patientsList, patientId]);
 
   /* ---------- Handle View Button Click ---------- */
   const handleViewClick = (id: string) => {
@@ -148,7 +145,3 @@ const PatientsPage: React.FC = () => {
 };
 
 export default PatientsPage;
-function dispatch(arg0: any) {
-  throw new Error("Function not implemented.");
-}
-
