@@ -17,46 +17,51 @@ import {
   Alert,
   Divider,
 } from "@mui/material";
+
 import PatientsData from "../../JSON/patients.json";
+import TableSkeleton from "../../components/table/TableSkeleton";
 import { PatientDetails } from "@/app/src/types/PatientDetails";
 
 const DischargePatientsPage = () => {
   const [treatedPatients, setTreatedPatients] = useState<PatientDetails[]>([]);
-  
+  const [loading, setLoading] = useState<boolean>(true);
+
   // Snackbar state
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
 
+  const headers = ["ID", "Name", "Age", "Gender", "Contact", "Actions"];
+
   useEffect(() => {
-    setTreatedPatients(PatientsData.patient_data as PatientDetails[]);
+    setLoading(true);
+
+    // Simulate API delay
+    setTimeout(() => {
+      const treated = PatientsData.patient_data.filter(
+        (p) => p.patient_status === "treated"
+      ) as PatientDetails[];
+
+      setTreatedPatients(treated);
+      setLoading(false);
+    }, 1000);
   }, []);
 
   /* ---------- Handle Discharge ---------- */
   const handleDischarge = (id: string) => {
     setTreatedPatients((prev) => prev.filter((patient) => patient.id !== id));
 
-    // ✅ Show notification instead of alert
     setSnackbarMessage(`Patient ${id} has been discharged!`);
     setSnackbarOpen(true);
   };
 
-  const fetchDischargedPatientsData = () => {
-    const patient = PatientsData.patient_data.find((p) => p.patient_status === "treated");
-  };
-
-  useEffect(() => {
-    fetchDischargedPatientsData();
-  });
-
-  const headers = ["ID", "Name", "Age", "Gender", "Contact", "Actions"];
-
   return (
-    <Container>
+    <Container maxWidth="lg">
       <Card sx={{ mt: 4 }}>
-        <Typography variant="h5" mt={2} mb={2} px={2} sx={{ fontWeight: 600 }}>
+        <Typography variant="h5" mt={2} mb={2} px={2} fontWeight={600}>
           Discharge Patients
         </Typography>
-        <Divider sx={{mb: "2"}} />
+
+        <Divider />
 
         <CardContent>
           <TableContainer>
@@ -72,7 +77,9 @@ const DischargePatientsPage = () => {
               </TableHead>
 
               <TableBody>
-                {treatedPatients.length > 0 ? (
+                {loading ? (
+                  <TableSkeleton rows={5} columns={headers.length} />
+                ) : treatedPatients.length > 0 ? (
                   treatedPatients.map((patient) => (
                     <TableRow key={patient.id}>
                       <TableCell>{patient.id}</TableCell>
@@ -84,6 +91,7 @@ const DischargePatientsPage = () => {
                         <Button
                           variant="contained"
                           color="success"
+                          size="small"
                           onClick={() => handleDischarge(patient.id)}
                         >
                           Discharge

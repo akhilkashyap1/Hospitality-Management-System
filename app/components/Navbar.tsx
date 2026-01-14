@@ -23,9 +23,9 @@ const Navbar = () => {
 
   const navLinks = [
     { title: "Dashboard", href: "/" },
-    { title: "Patients", href: "/patients" },
-    { title: "Doctors", href: "/doctors" },
-    { title: "Discharge Patients", href: "/patients/DischargePatients" },
+    { title: "Patients", href: "/patients/patients-list" },
+    { title: "Doctors", href: "/doctors/doctors-list" },
+    { title: "Discharge Patients", href: "/doctors/discharge-patients" },
   ];
 
   const toggleDrawer = (open: boolean) => () => {

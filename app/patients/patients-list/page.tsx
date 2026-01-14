@@ -18,9 +18,9 @@ import {
   CircularProgress,
 } from "@mui/material";
 
-import patientData from "../JSON/patients.json";
-import TableSkeleton from "../components/table/TableSkeleton";
-import { PatientDetails } from "../src/types/PatientDetails";
+import patientData from "../../JSON/patients.json";
+import TableSkeleton from "../../components/table/TableSkeleton";
+import { PatientDetails } from "../../src/types/PatientDetails";
 
 const PatientsPage = () => {
   const router = useRouter();
@@ -91,7 +91,7 @@ const PatientsPage = () => {
   const handleViewClick = (id: string) => {
     setLoadingId(id);
     setTimeout(() => {
-      router.push(`/patients/${id}`);
+      router.push(`/patients/patients-preview/${id}`);
     }, 400);
   };
 

@@ -22,7 +22,7 @@ import {
   Divider,
 } from "@mui/material";
 
-import patientsData from "../../JSON/patients.json"; // Default JSON fallback
+import patientsData from "../../../JSON/patients.json"; // Default JSON fallback
 
 /* ===================== Types ===================== */
 type PatientStatus = "booked" | "pending" | "treated" | "discharged";
